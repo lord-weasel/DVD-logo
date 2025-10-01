@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>DVD Screensaver</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    overflow: hidden;
+  }
+  canvas {
+    display: block;
+    margin: auto;
+    background: black;
+    aspect-ratio: 9/16;
+    height: auto;
+    width: auto;
+  }
+</style>
+</head>
+<body>
+<canvas id="dvd"></canvas>
+<script>
+  const canvas = document.getElementById("dvd");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = window.innerHeight * (9/16);
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const logo = new Image();
+  logo.src = "dvd.svg";
+
+  let x = 50, y = 50;
+  let dx = 1.5, dy = 1.5;
+  const scale = 0.4;
+  let logoWidth, logoHeight;
+
+  let tintColor = { r: 255, g: 255, b: 255 };
+
+  logo.onload = () => {
+    logoWidth = logo.width * scale;
+    logoHeight = logo.height * scale;
+    animate();
+  };
+
+  function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.drawImage(logo, x, y, logoWidth, logoHeight);
+
+    ctx.fillStyle = `rgb(${tintColor.r},${tintColor.g},${tintColor.b})`;
+    ctx.globalCompositeOperation = "source-atop";
+    ctx.fillRect(x, y, logoWidth, logoHeight);
+    ctx.globalCompositeOperation = "source-over";
+
+    x += dx;
+    y += dy;
+
+    if (x + logoWidth >= canvas.width || x <= 0) {
+      dx = -dx;
+      randomizeColor();
+    }
+
+    if (y + logoHeight >= canvas.height || y <= 0) {
+      dy = -dy;
+      randomizeColor();
+    }
+
+    requestAnimationFrame(animate);
+  }
+
+  function randomizeColor() {
+    tintColor = {
+      r: Math.floor(Math.random() * 200 + 55),
+      g: Math.floor(Math.random() * 200 + 55),
+      b: Math.floor(Math.random() * 200 + 55)
+    };
+  }
+</script>
+</body>
+</html>
